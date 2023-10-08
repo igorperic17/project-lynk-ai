@@ -1,5 +1,3 @@
-import axios, { AxiosResponse } from 'axios';
-
 interface EmbeddingsResponse {
   embedding: number[];
 }
@@ -24,14 +22,21 @@ class OllamaService {
    */
   async generateEmbeddings(params: GenerateEmbeddingsParams): Promise<number[]> {
     try {
-      // console.log(`${this.baseUrl}/embeddings`);
-      // console.log(JSON.stringify(params));
-      const response: AxiosResponse<EmbeddingsResponse> = await axios.post(
-        `${this.baseUrl}/embeddings`,
-        JSON.stringify(params)
-      );
-      // console.log(response);
-      return response.data.embedding;
+      const response = await fetch(`${this.baseUrl}/embeddings`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(params),
+      });
+
+      // Check if the request was successful
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data: EmbeddingsResponse = await response.json();
+      return data.embedding;
     } catch (error) {
       console.error('Error generating embeddings:', error);
       throw error;

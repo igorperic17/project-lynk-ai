@@ -3,6 +3,8 @@ import { codeBlock } from "common-tags";
 import GPT3Tokenizer from "gpt3-tokenizer";
 import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from "openai-edge";
 import { OpenAIStream, StreamingTextResponse } from "ai";
+import OllamaService from '../../src/app/OllamaService'
+import { NextApiRequest, NextApiResponse } from "next";
 
 const openAiKey = process.env.OPENAI_KEY;
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -24,9 +26,30 @@ type RequestBody = {
   prompt: string
 }
 
-export default async function handler(req: Request, res: Response) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
-  const { prompt: query } = await req.json();
+  // Read from the ReadableStream
+  const chunks = [];
+  const reader = req.body.getReader();
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    chunks.push(value);
+  }
+
+  // Convert the chunks to a string and then parse it as JSON
+  const body = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+
+  // Log the parsed body
+  // console.log('Parsed Request Body:', body);
+
+  // Destructure and use the body content
+  const { prompt: query } = body;
+  // Log the parsed body
+  // console.log('Prompt:', query);
+
+  // const { prompt: query } = await req.body;
   try {
     if (!openAiKey) {
       throw new Error("Missing environment variable OPENAI_KEY");
@@ -38,62 +61,43 @@ export default async function handler(req: Request, res: Response) {
     if (!supabaseKey) {
       throw new Error("Missing environment variable NEXT_PUBLIC_SUPABASE_KEY");
     }
-    
-    console.log(req);
-    console.log(query);
 
     if (!query) {
       throw new Error("Missing query in request data");
     }
 
-    const supabaseClient = createClient(supabaseUrl, supabaseKey);
 
     const sanitizedQuery = query.trim();
-    const moderationResponse = await openai
-      .createModeration({ input: sanitizedQuery })
-      .then((modRes) => modRes.json());
-
-    const [results] = moderationResponse.results;
-
-    if (results.flagged) {
-      throw new Error("Flagged content", 
-      // {
-      //   flagged: true,
-      //   categories: results.categories,
-      // });
-      )
-    }
-
-    const embeddingResponse = await openai.createEmbedding({
-      model: "text-embedding-ada-002",
-      input: sanitizedQuery.replaceAll("\n", " "),
+    
+    const embeddingService = new OllamaService();
+    const embedding = await embeddingService.generateEmbeddings({
+      model: 'llama2',
+      prompt: sanitizedQuery,
+      // prompt: "test",
     });
 
-    if (embeddingResponse.status !== 200) {
-      throw new Error(
-        "Failed to create embedding for question",
-        // embeddingResponse,
-      );
+    // console.log(`Embedding generated: ${embedding}`)
+
+    const supabaseClient = createClient(supabaseUrl, supabaseKey);
+    const { error: matchError, data: pageSections } = await supabaseClient.rpc(
+      "match_page_sections",
+      {
+        embedding,
+        match_threshold: 0.78,
+        match_count: 10,
+        min_content_length: 50,
+      },
+    );
+
+    if (matchError) {
+      console.log(matchError);
+      throw new Error("Failed to match page sections ${matchError}");
     }
 
-    const {
-      data: [{ embedding }],
-    } = await embeddingResponse.json();
 
-    // const { error: matchError, data: pageSections } = await supabaseClient.rpc(
-    //   "match_page_sections_lynk",
-    //   {
-    //     embedding,
-    //     match_threshold: 0.78,
-    //     match_count: 10,
-    //     min_content_length: 50,
-    //   },
-    // );
-
-    // if (matchError) {
-    //   console.log(matchError);
-    //   throw new Error("Failed to match page sections ${matchError}");
-    // }
+    return new Response(JSON.stringify(
+      { status: 200, error: null, data: pageSections }
+    ));
 
     // const tokenizer = new GPT3Tokenizer({ type: "gpt3" });
     // let tokenCount = 0;
@@ -151,20 +155,21 @@ export default async function handler(req: Request, res: Response) {
     // const stream = OpenAIStream(response);
     // return new StreamingTextResponse(stream);
 
-    let { data: projects, error } = await supabaseClient
-      .from('projects')
-      .select('name')
+    // let { data: projects, error } = await supabaseClient
+    //   .from('projects')
+    //   .select('name')
     
-    console.log(projects);
+    // console.log(projects);
     
-    return new Response(JSON.stringify(
-      { status: 400, error: null, data: projects }
-    )).json();
+    // return new Response(JSON.stringify(
+    //   { status: 400, error: null, data: projects }
+    // )).json();
 
   } catch (err: any) {
     console.log(err);
+
     return new Response(JSON.stringify(
       { status: 400, error: err.message, data: err.data }
-    )).json()
+    ));
   }
 }
