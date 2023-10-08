@@ -4,14 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "pnpm run embeddings && next build",
-    "start": "next start",
-    "embeddings": "npx tsc src/lib/generate-embeddings.ts"
+    "build": "next build",
+    "start": "next start"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.38.0",
     "@types/common-tags": "^1.8.2",
     "ai": "^2.2.14",
+    "axios": "^1.5.1",
     "common-tags": "^1.8.2",
     "dotenv": "^16.3.1",
     "errors": "^0.3.0",

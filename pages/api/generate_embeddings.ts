@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { createHash } from 'crypto'
-import dotenv from 'dotenv'
+import * as dotenv from 'dotenv';
 import { ObjectExpression } from 'estree'
 import { readdir, readFile, stat } from 'fs/promises'
 import GithubSlugger from 'github-slugger'
@@ -10,17 +10,31 @@ import { mdxFromMarkdown, MdxjsEsm } from 'mdast-util-mdx'
 import { toMarkdown } from 'mdast-util-to-markdown'
 import { toString } from 'mdast-util-to-string'
 import { mdxjs } from 'micromark-extension-mdxjs'
-import 'openai'
-import { Configuration, OpenAIApi } from 'openai'
+// import 'openai'
+// import OpenAIApi from 'openai'
+// import Configuration from 'openai';
 import { basename, dirname, join } from 'path'
 import { u } from 'unist-builder'
 import { filter } from 'unist-util-filter'
 import { inspect } from 'util'
 import yargs from 'yargs'
+import { hideBin } from 'yargs/helpers';
+
+import OllamaService from '../../src/app/OllamaService'
 
 dotenv.config()
 
 const ignoredFiles = ['pages/404.mdx']
+
+import type { NextApiRequest, NextApiResponse } from 'next';
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  console.log("Started generating embeddings...");
+
+  await generateEmbeddings();
+
+  res.status(200).json({ message: "Embeddings generated successfully." });
+}
 
 /**
  * Extracts ES literals from an `estree` `ObjectExpression`
@@ -265,13 +279,16 @@ class MarkdownEmbeddingSource extends BaseEmbeddingSource {
 type EmbeddingSource = MarkdownEmbeddingSource
 
 async function generateEmbeddings() {
-  const argv = await yargs.option('refresh', {
+  
+  const argv = yargs(hideBin(process.argv))
+  .option('refresh', {
     alias: 'r',
-    description: 'Refresh data',
     type: 'boolean',
-  }).argv
+    description: 'Refresh data',
+  })
+  .argv;
 
-  const shouldRefresh = argv.refresh
+  const shouldRefresh = await argv; // TODO: might not be what we need, check when refresh becomes relevant
 
   if (
     !process.env.NEXT_PUBLIC_SUPABASE_URL ||
@@ -295,7 +312,7 @@ async function generateEmbeddings() {
   )
 
   const embeddingSources: EmbeddingSource[] = [
-    ...(await walk('pages'))
+    ...(await walk('data/mdx_files'))
       .filter(({ path }) => /\.mdx?$/.test(path))
       .filter(({ path }) => !ignoredFiles.includes(path))
       .map((entry) => new MarkdownEmbeddingSource('guide', entry.path)),
@@ -309,7 +326,10 @@ async function generateEmbeddings() {
     console.log('Refresh flag set, re-generating all pages')
   }
 
+  var i = 0;
   for (const embeddingSource of embeddingSources) {
+    i++;
+    console.log(`Processing document ${i} out of ${embeddingSources.length}...`)
     const { type, source, path, parentPath } = embeddingSource
 
     try {
@@ -327,7 +347,7 @@ async function generateEmbeddings() {
         throw fetchPageError
       }
 
-      type Singular<T> = T extends any[] ? undefined : T
+      type Singular<T> = T extends any[] ? any : T
 
       // We use checksum to determine if this page & its sections need to be regenerated
       if (!shouldRefresh && existingPage?.checksum === checksum) {
@@ -418,23 +438,34 @@ async function generateEmbeddings() {
       for (const { slug, heading, content } of sections) {
         // OpenAI recommends replacing newlines with spaces for best results (specific to embeddings)
         const input = content.replace(/\n/g, ' ')
+        // console.log("Sending the input to be embedded: ")
+        // console.log(input)
 
         try {
-          const configuration = new Configuration({
-            apiKey: process.env.OPENAI_KEY,
-          })
-          const openai = new OpenAIApi(configuration)
 
-          const embeddingResponse = await openai.createEmbedding({
-            model: 'text-embedding-ada-002',
-            input,
-          })
+          const embeddingService = new OllamaService();
+          const embedding = await embeddingService.generateEmbeddings({
+            model: 'llama2',
+            prompt: input,
+            // prompt: "test",
+          });
 
-          if (embeddingResponse.status !== 200) {
-            throw new Error(inspect(embeddingResponse.data, false, 2))
+          // console.log("Embedding for the page: ");
+          // console.log(embedding);
+
+          // const configuration = new Configuration({
+          //   apiKey: process.env.OPENAI_KEY,
+          // })
+          // const openai = new OpenAIApi(configuration)
+
+          // const embeddingResponse = await openai.createEmbedding({
+          //   model: 'text-embedding-ada-002',
+          //   input,
+          // })
+
+          if (embedding.length == 0) {
+            throw new Error(inspect(embedding, false, 2))
           }
-
-          const [responseData] = embeddingResponse.data.data
 
           const { error: insertPageSectionError, data: pageSection } = await supabaseClient
             .from('nods_page_section')
@@ -443,8 +474,8 @@ async function generateEmbeddings() {
               slug,
               heading,
               content,
-              token_count: embeddingResponse.data.usage.total_tokens,
-              embedding: responseData.embedding,
+              token_count: embedding.length, // TODO: this is probably wrong, should count tokens buyt I don't care ATM
+              embedding: embedding,
             })
             .select()
             .limit(1)
@@ -486,8 +517,4 @@ async function generateEmbeddings() {
   console.log('Embedding generation complete')
 }
 
-async function main() {
-  await generateEmbeddings()
-}
 
-main().catch((err) => console.error(err))

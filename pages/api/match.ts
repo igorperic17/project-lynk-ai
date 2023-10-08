@@ -159,12 +159,12 @@ export default async function handler(req: Request, res: Response) {
     
     return new Response(JSON.stringify(
       { status: 400, error: null, data: projects }
-    ))
+    )).json();
 
   } catch (err: any) {
     console.log(err);
     return new Response(JSON.stringify(
       { status: 400, error: err.message, data: err.data }
-    ))
+    )).json()
   }
 }
