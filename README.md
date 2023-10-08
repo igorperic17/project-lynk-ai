@@ -9,7 +9,7 @@ https://github.com/igorperic17/project-lynk-ai/assets/525557/3f84604a-cf13-4dff-
 
 https://www.spaceappschallenge.org/2023/find-a-team/project-lynk-ai/?tab=project
 
-A full-stack web app in Next.js using to match NASA's open source projects to your open source contributor profile using Large Language Models and semantic vector embeddings.
+A full-stack web app in Next.js using to match NASA's open source projects to your open source contributor profile using Large Language Models (self-hosted llama2-7b) and semantic vector embeddings (PostgreSQL on Supabase + pgvector).
 
 ## Hi-Res video
 
