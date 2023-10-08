@@ -10,10 +10,12 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ projectInfo, onTagClick
   const { name, description, contactName, urls, nlpTags } = projectInfo;
 
   return (
-    <div className="transition ease-in-out bg-transparent p-6 rounded-lg max-w-xd mx-auto mt-6 border-zinc-800 border hover:border-gray-500 mb-6"  onClick={() => onTagClick?.(description ?? "")}>
-      <h2 className="text-2xl font-semibold text-gray-300 mb-4">{name || 'Project Name'}</h2>
-      <p className="text-gray-300 mb-4">{description || 'Project Description'}</p>
-      <p className="text-gray-300 mb-4">{contactName ? `Contact: ${contactName}` : ''}</p>
+    <div className="hover:border-blue-100 hover:bg-blue-800 hover:dark:border-blue-900 hover:dark:bg-blue-900/30 transition ease-in-out bg-transparent p-6 rounded-lg max-w-xd mx-auto mt-6 border-zinc-800 border hover:border-gray-500 mb-6" 
+    // onClick={() => onTagClick?.(description ?? "")}
+    >
+      {/* <h2 className="text-2xl font-semibold text-gray-300 mb-4">{name || 'Project Name'}</h2> */}
+      <p className="text-gray-300 text-xl  mb-4">{description || 'Project Description'}</p>
+      {/* <p className="text-gray-300 mb-4">{contactName ? `Contact: ${contactName}` : ''}</p> */}
       
       {urls && urls.length > 0 && (
         <div className="mb-4">
@@ -33,7 +35,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ projectInfo, onTagClick
           <h4 className="text-lg font-medium text-gray-300 mb-2">Tags:</h4>
           <ul className="flex flex-wrap">
             {nlpTags.map((tag, index) => (
-              <li key={index} className="transition ease-in-out bg-blue-100 text-blue-900 px-2 py-1 rounded-full mr-2 mb-2 hover:bg-gray-200 hover:glow hover:cursor-pointer">
+              <li key={index} className="mb-3 transition ease-in-out border-blue-400 border bg-transparent text-blue-1000 px-2 py-1 rounded-full mr-2 mb-2 hover:bg-blue-200 hover:text-blue-900 hover:cursor-pointer">
                 <a className="" onClick={() => onTagClick?.(tag)}>{tag}</a>
               </li>
             ))}
