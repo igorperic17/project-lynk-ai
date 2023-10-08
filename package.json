@@ -24,6 +24,7 @@
     "mdast-util-mdx": "^3.0.0",
     "micromark-extension-mdxjs": "^2.0.0",
     "next": "13.5.4",
+    "next-auth": "^4.23.2",
     "openai": "^4.11.1",
     "openai-edge": "^1.2.2",
     "pnpm": "^8.8.0",
