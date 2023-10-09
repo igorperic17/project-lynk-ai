@@ -164,7 +164,7 @@ export default function Home() {
             Return to your prompt so your provide more information about your skills and goals.
           </p>
         </a>
-        <p className="center mb-6 text-s italic">"{userProfile}..."</p>
+        <p className="center mb-6 text-s italic">&quot;{userProfile}...&quot;</p>
         {/* {projects.length == 0 && <div className="bg-blue-400 animate-pulse ease-in-out duration-700 transform-gpu transition-transform origin-center scale-50 hover:scale-100 p-5 rounded-full"></div>} */}
         </div>
       )}
@@ -251,7 +251,7 @@ export default function Home() {
         </a>
 
       <Modal show={showModal} onClose={() => setShowModal(false)}>
-        <p className="text-lg font-bold">Hello, I'm a Modal!</p>
+        <p className="text-lg font-bold">Hello, I&apos;m a Modal!</p>
       </Modal>
       </div>
       
