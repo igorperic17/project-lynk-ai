@@ -12,7 +12,7 @@ class OllamaService {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = 'http://127.0.0.1:11434/api'; // Ollama server base URL
+    this.baseUrl = `http://${process.env.BASE_URL_OLLAMA}/api`; // Ollama server base URL
   }
 
   /**
