@@ -1,19 +1,9 @@
 import { createClient } from "@supabase/supabase-js";
-import { codeBlock } from "common-tags";
-import GPT3Tokenizer from "gpt3-tokenizer";
-import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from "openai-edge";
-import { OpenAIStream, StreamingTextResponse } from "ai";
 import OllamaService from '../../src/app/OllamaService'
 import { NextApiRequest, NextApiResponse } from "next";
 
-const openAiKey = process.env.OPENAI_KEY;
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY;
-
-const config = new Configuration({
-  apiKey: openAiKey,
-});
-const openai = new OpenAIApi(config);
 
 export const runtime = "edge";
 
@@ -51,9 +41,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   // const { prompt: query } = await req.body;
   try {
-    if (!openAiKey) {
-      throw new Error("Missing environment variable OPENAI_KEY");
-    }
     if (!supabaseUrl) {
       throw new Error("Missing environment variable NEXT_PUBLIC_SUPABASE_URL");
     }
