@@ -4,7 +4,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion"; // Ensure to install framer-motion
 import ProjectDetails from "./project-card";
-import { load } from "js-yaml";
 import Modal from "./Modal";
 
 export type ProjectInfo = {
@@ -26,18 +25,6 @@ export default function Home() {
   useEffect(() => {
     setUserProfile("")
   }, []);
-
-
-  // const Loading = () => (
-  //   <motion.div
-  //     initial={{ opacity: 0 }}
-  //     animate={{ opacity: 1 }}
-  //     exit={{ opacity: 0 }}
-  //   >
-  //     {/* Add your loading indicator here */}
-  //   </motion.div>
-  // );
-  
 
   const ProjectsList = ({ projects } : {projects: ProjectInfo[]}) => (
     <motion.ul
