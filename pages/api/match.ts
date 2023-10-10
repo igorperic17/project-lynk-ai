@@ -3,7 +3,7 @@ import OllamaService from '../../src/app/OllamaService'
 import { NextApiRequest, NextApiResponse } from "next";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 export const runtime = "edge";
 
