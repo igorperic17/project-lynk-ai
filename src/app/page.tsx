@@ -92,7 +92,7 @@ export default function Home() {
     setError(null);
 
     try {
-      const response = await fetch(`http://${process.env.NEXT_PUBLIC_BASE_URL}/api/match`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/match`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: userProfile }),
