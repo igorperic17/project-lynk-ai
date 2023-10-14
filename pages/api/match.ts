@@ -81,10 +81,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       throw new Error("Failed to match page sections ${matchError}");
     }
 
-
-    return new Response(JSON.stringify(
-      { status: 200, error: null, data: pageSections }
-    ));
+    res.status(200).json(pageSections);
+    // return new Response(JSON.stringify(
+    //   { status: 200, error: null, data: pageSections }
+    // ));
 
     // const tokenizer = new GPT3Tokenizer({ type: "gpt3" });
     // let tokenCount = 0;
@@ -155,8 +155,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   } catch (err: any) {
     console.log(err);
 
-    return new Response(JSON.stringify(
-      { status: 400, error: err.message, data: err.data }
-    ));
+    res.status(400).json({error: err.message, data: err.data });
   }
 }
