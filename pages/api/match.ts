@@ -1,11 +1,12 @@
 import { createClient } from "@supabase/supabase-js";
 import OllamaService from '../../src/app/OllamaService'
-import { NextApiRequest, NextApiResponse } from "next";
+// import { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-export const runtime = "edge";
+// export const runtime = "edge";
 
 type ResponseData = {
   error: string
@@ -17,25 +18,26 @@ type RequestBody = {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // console.log(req);
 
-  // Read from the ReadableStream
-  const chunks = [];
-  const reader = req.body.getReader();
+  // // Read from the ReadableStream
+  // const chunks = [];
+  // const reader = req.body.getReader();
 
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    chunks.push(value);
-  }
+  // while (true) {
+  //   const { done, value } = await reader.read();
+  //   if (done) break;
+  //   chunks.push(value);
+  // }
 
-  // Convert the chunks to a string and then parse it as JSON
-  const body = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+  // // Convert the chunks to a string and then parse it as JSON
+  // const body = JSON.parse(Buffer.concat(chunks).toString('utf8'));
 
   // Log the parsed body
-  // console.log('Parsed Request Body:', body);
+  console.log('Parsed Request Body:', req.body);
 
   // Destructure and use the body content
-  const { prompt: query } = body;
+  const { prompt: query } = req.body;
   // Log the parsed body
   // console.log('Prompt:', query);
 
@@ -52,7 +54,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!query) {
       throw new Error("Missing query in request data");
     }
-
 
     const sanitizedQuery = query.trim();
     
@@ -153,8 +154,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // )).json();
 
   } catch (err: any) {
-    console.log(err);
-
     res.status(400).json({error: err.message, data: err.data });
   }
 }

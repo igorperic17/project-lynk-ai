@@ -82,7 +82,7 @@ export default function Home() {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/match`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: userProfile }),
+        body: JSON.stringify({ 'prompt': userProfile }),
       });
 
       if (!response.ok) {
@@ -90,7 +90,8 @@ export default function Home() {
       }
 
       const resp = await response.json();
-      setProjects(resp.data.map((project: any) => {
+      // console.log(resp);
+      setProjects(resp.map((project: any) => {
         const p = extractProjectInfo(project.content)
         return p
       })); // Assuming the API returns an object with a projects property

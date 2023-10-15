@@ -21,6 +21,7 @@ class OllamaService {
    * @returns A promise that resolves to the embeddings.
    */
   async generateEmbeddings(params: GenerateEmbeddingsParams): Promise<number[]> {
+    // console.log(`${this.baseUrl}/embeddings`);
     try {
       const response = await fetch(`${this.baseUrl}/embeddings`, {
         method: 'POST',
