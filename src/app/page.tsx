@@ -103,15 +103,15 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full items-center justify-center font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
+    <main className="flex min-h-screen flex-col items-center justify-between p-[10%]">
+      <div className="z-10 w-full items-center justify-center font-mono text-sm flex lg:flex">
+        <p className="pt-3 pb-3 fixed text-center left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 s:pb-6 s:pt-6 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
           Linking your contributions to the best matching projects on the market!
           </p>
       </div>
 
       <div className="mt-10 relative flex-row place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <p className='ease-in-out font-mono p-4 font-medium text-4xl font-bold '>{!loading ? "Project Lynk AI" : "Lynking you with..."}</p>
+        <p className='text-center ease-in-out font-mono p-4 font-medium text-4xl font-bold '>{!loading ? "Project Lynk AI" : "Lynking you with..."}</p>
       </div>
 
       <div className="relative w-full flex-row">
@@ -133,9 +133,9 @@ export default function Home() {
       )}
       </AnimatePresence>
       {(loading || projects.length > 0) && (
-        <div className="flex items-center justify-center min-h-300 min-w-300 bg-transparent mb-20 mt-20">
+        <div className="flex flex-col sm:flex-row items-center justify-center min-h-300 min-w-[90%] bg-transparent mb-20 mt-20">
           <a
-          className="group min-w-[250px] max-w-[300px] hover:cursor-pointer mr-20 rounded-lg border border-gray-800 px-5 py-4 transition-colors hover:border-blue-300 hover:bg-blue-100 hover:dark:border-blue-700 hover:dark:bg-blue-800/30"
+          className="group sm:min-w-[250px] w-full sm:max-w-[300px] hover:cursor-pointer sm:mr-20 rounded-lg border border-gray-800 px-5 py-4 transition-colors hover:border-blue-300 hover:bg-blue-100 hover:dark:border-blue-700 hover:dark:bg-blue-800/30"
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => {
@@ -152,7 +152,7 @@ export default function Home() {
             Return to your prompt so your provide more information about your skills and goals.
           </p>
         </a>
-        <p className="center mb-6 text-s italic">&quot;{userProfile}...&quot;</p>
+        <p className="center max-w-[90%] truncate mb-6 text-s italic mt-6 sm:mt-0">&quot;{userProfile}...&quot;</p>
         {/* {projects.length == 0 && <div className="bg-blue-400 animate-pulse ease-in-out duration-700 transform-gpu transition-transform origin-center scale-50 hover:scale-100 p-5 rounded-full"></div>} */}
         </div>
       )}
@@ -164,7 +164,7 @@ export default function Home() {
       </div>
       {(projects.length == 0 && !loading) && (
       <a
-      className="hover:cursor-pointer group rounded-lg border border-gray-700 px-5 py-4 transition-colors hover:border-blue-300 hover:bg-blue-100 hover:dark:border-blue-700 hover:dark:bg-blue-800/30"
+      className="mt-5 mb-5 hover:cursor-pointer group rounded-lg border border-gray-700 px-5 py-4 transition-colors hover:border-blue-300 hover:bg-blue-100 hover:dark:border-blue-700 hover:dark:bg-blue-800/30"
       target="_blank"
       rel="noopener noreferrer"
       onClick={handleMatch}
