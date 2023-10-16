@@ -10,11 +10,11 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ projectInfo, onTagClick
   const { name, description, contactName, urls, nlpTags } = projectInfo;
 
   return (
-    <div className="hover:border-blue-100 hover:bg-blue-800 hover:dark:border-blue-900 hover:dark:bg-blue-900/30 transition ease-in-out bg-transparent p-6 rounded-lg max-w-xd mx-auto mt-6 border-zinc-800 border hover:border-gray-500 mb-6" 
+    <div className="flex-col hover:border-blue-100 hover:bg-blue-800 hover:dark:border-blue-900 hover:dark:bg-blue-900/30 transition ease-in-out bg-transparent p-6 rounded-lg mt-6 border-zinc-800 border hover:border-gray-500 mb-6" 
     // onClick={() => onTagClick?.(description ?? "")}
     >
       {/* <h2 className="text-2xl font-semibold text-gray-300 mb-4">{name || 'Project Name'}</h2> */}
-      <p className="text-gray-300 text-s sm:text-xl  mb-4">{description || 'Project Description'}</p>
+      <p className="text-elipsis overflow-hidden  text-gray-300 text-s sm:text-xl mb-4">{description || 'Project Description'}</p>
       {/* <p className="text-gray-300 mb-4">{contactName ? `Contact: ${contactName}` : ''}</p> */}
       
       {urls && urls.length > 0 && (
